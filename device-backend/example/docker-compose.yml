@@ -1,0 +1,21 @@
+version: '3.3'
+
+services:
+  redis:
+    image: redis
+    ports:
+      - "6379:6379"
+    restart: always
+
+  device-backend:
+    image: device-backend
+    ports:
+      - "8091:8091"
+    links:
+      - redis:redis_server
+    environment:
+        - MYSQL_SERVER_HOST=192.168.1.211
+        - MYSQL_SERVER_PORT=3306
+        - MYSQL_LOGIN_USER=root
+        - MYSQL_USER_PASSWORD=secretpw
+    restart: always

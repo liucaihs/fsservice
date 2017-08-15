@@ -1,0 +1,13 @@
+version: '3.3'
+
+services:
+  device-frontend:
+    image: device-frontend
+    ports:
+      - "8090:8090"
+    environment:
+      - MYSQL_SERVER_HOST=192.168.1.211
+      - MYSQL_SERVER_PORT=3306
+      - MYSQL_LOGIN_USER=root
+      - MYSQL_USER_PASSWORD=secretpw
+    restart: always
