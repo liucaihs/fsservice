@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+package command;
+
+service Command {
+        // list users on pages
+        rpc ListOnline(PageOption) returns (stream User) {}
+
+}
+
+message PageOption {
+	int32 page_size = 1;
+	int32 per_page_num = 2;
+}
+
+message User {
+        string imei = 1;
+        string imsi = 2;
+        string iccid = 3;
+}
+
