@@ -1,21 +1,24 @@
 syntax = "proto3";
 
-package command;
+package proto;
 
 service Command {
         // list users on pages
-        rpc ListOnline(PageOption) returns (stream User) {}
+        rpc ListOnline(GrpcRequest) returns (GrpcReply) {}
 
 }
 
-message PageOption {
+message GrpcRequest {
 	int32 page_size = 1;
-	int32 per_page_num = 2;
+	int32 page_no = 2;
+    string action = 3;
+	string extend = 4;  
+	
 }
 
-message User {
-        string imei = 1;
-        string imsi = 2;
-        string iccid = 3;
+message GrpcReply {
+        int32 total_results = 1;  
+        bool has_next = 2;	 
+        string data = 3;     
 }
 

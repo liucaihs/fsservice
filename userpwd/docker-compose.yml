@@ -1,0 +1,16 @@
+version: '2'
+
+services:
+  userpwd:
+    image: userpwd
+    ports:
+      - "10001:10001"
+    environment:
+      - DB_CONNECTION=mysql
+      - DB_HOST=192.168.1.211
+      - DB_PORT=3306
+      - DB_DATABASE=csv_import
+      - DB_USERNAME=root
+      - DB_PASSWORD=secretpw
+      - ALERT_EMAIL=1258877243@qq.com
+    restart: always

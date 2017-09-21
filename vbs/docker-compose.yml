@@ -1,0 +1,28 @@
+version: '2'
+
+services:
+  vbs:
+    image: vbs
+    ports:
+      - "8093:8093"
+    links:
+      - redis-rc:redis_server
+    environment:
+        - GIN_MODE=release
+    restart: always
+
+  redis-rc:
+    image: redis
+    ports:
+      - "6379:6379"
+    restart: always
+
+  vfs:
+    image: vfs
+    ports:
+      - "8092:8092"
+    links:
+      - redis-rc:redis_server
+    environment:
+        - GIN_MODE=release
+    restart: always

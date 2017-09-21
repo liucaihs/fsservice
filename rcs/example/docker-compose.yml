@@ -1,0 +1,19 @@
+version: '2.0'
+
+services:
+  kafka:
+    image: wurstmeister/kafka:0.9.0.0
+    ports:
+      - "9092:9092"
+    restart: always
+
+  rcs:
+    image: rcs
+    ports:
+      - "9090:9090"
+	  - "2800:2800"
+    links:
+      - kafka:kafka_server
+    environment:
+        - GIN_MODE=release
+    restart: always

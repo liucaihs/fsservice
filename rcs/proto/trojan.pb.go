@@ -2,18 +2,18 @@
 // source: trojan.proto
 
 /*
-Package command is a generated protocol buffer package.
+Package proto is a generated protocol buffer package.
 
 It is generated from these files:
 	trojan.proto
 
 It has these top-level messages:
-	PageOption
-	User
+	GrpcRequest
+	GrpcReply
 */
-package command
+package proto
 
-import proto "github.com/golang/protobuf/proto"
+import proto1 "github.com/golang/protobuf/proto"
 import fmt "fmt"
 import math "math"
 
@@ -23,7 +23,7 @@ import (
 )
 
 // Reference imports to suppress errors if they are not otherwise used.
-var _ = proto.Marshal
+var _ = proto1.Marshal
 var _ = fmt.Errorf
 var _ = math.Inf
 
@@ -31,67 +31,83 @@ var _ = math.Inf
 // is compatible with the proto package it is being compiled against.
 // A compilation error at this line likely means your copy of the
 // proto package needs to be updated.
-const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
+const _ = proto1.ProtoPackageIsVersion2 // please upgrade the proto package
 
-type PageOption struct {
-	PageSize   int32 `protobuf:"varint,1,opt,name=page_size,json=pageSize" json:"page_size,omitempty"`
-	PerPageNum int32 `protobuf:"varint,2,opt,name=per_page_num,json=perPageNum" json:"per_page_num,omitempty"`
+type GrpcRequest struct {
+	PageSize int32  `protobuf:"varint,1,opt,name=page_size,json=pageSize" json:"page_size,omitempty"`
+	PageNo   int32  `protobuf:"varint,2,opt,name=page_no,json=pageNo" json:"page_no,omitempty"`
+	Action   string `protobuf:"bytes,3,opt,name=action" json:"action,omitempty"`
+	Extend   string `protobuf:"bytes,4,opt,name=extend" json:"extend,omitempty"`
 }
 
-func (m *PageOption) Reset()                    { *m = PageOption{} }
-func (m *PageOption) String() string            { return proto.CompactTextString(m) }
-func (*PageOption) ProtoMessage()               {}
-func (*PageOption) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{0} }
+func (m *GrpcRequest) Reset()                    { *m = GrpcRequest{} }
+func (m *GrpcRequest) String() string            { return proto1.CompactTextString(m) }
+func (*GrpcRequest) ProtoMessage()               {}
+func (*GrpcRequest) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{0} }
 
-func (m *PageOption) GetPageSize() int32 {
+func (m *GrpcRequest) GetPageSize() int32 {
 	if m != nil {
 		return m.PageSize
 	}
 	return 0
 }
 
-func (m *PageOption) GetPerPageNum() int32 {
+func (m *GrpcRequest) GetPageNo() int32 {
 	if m != nil {
-		return m.PerPageNum
+		return m.PageNo
 	}
 	return 0
 }
 
-type User struct {
-	Imei  string `protobuf:"bytes,1,opt,name=imei" json:"imei,omitempty"`
-	Imsi  string `protobuf:"bytes,2,opt,name=imsi" json:"imsi,omitempty"`
-	Iccid string `protobuf:"bytes,3,opt,name=iccid" json:"iccid,omitempty"`
-}
-
-func (m *User) Reset()                    { *m = User{} }
-func (m *User) String() string            { return proto.CompactTextString(m) }
-func (*User) ProtoMessage()               {}
-func (*User) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{1} }
-
-func (m *User) GetImei() string {
+func (m *GrpcRequest) GetAction() string {
 	if m != nil {
-		return m.Imei
+		return m.Action
 	}
 	return ""
 }
 
-func (m *User) GetImsi() string {
+func (m *GrpcRequest) GetExtend() string {
 	if m != nil {
-		return m.Imsi
+		return m.Extend
 	}
 	return ""
 }
 
-func (m *User) GetIccid() string {
+type GrpcReply struct {
+	TotalResults int32  `protobuf:"varint,1,opt,name=total_results,json=totalResults" json:"total_results,omitempty"`
+	HasNext      bool   `protobuf:"varint,2,opt,name=has_next,json=hasNext" json:"has_next,omitempty"`
+	Data         string `protobuf:"bytes,3,opt,name=data" json:"data,omitempty"`
+}
+
+func (m *GrpcReply) Reset()                    { *m = GrpcReply{} }
+func (m *GrpcReply) String() string            { return proto1.CompactTextString(m) }
+func (*GrpcReply) ProtoMessage()               {}
+func (*GrpcReply) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{1} }
+
+func (m *GrpcReply) GetTotalResults() int32 {
 	if m != nil {
-		return m.Iccid
+		return m.TotalResults
+	}
+	return 0
+}
+
+func (m *GrpcReply) GetHasNext() bool {
+	if m != nil {
+		return m.HasNext
+	}
+	return false
+}
+
+func (m *GrpcReply) GetData() string {
+	if m != nil {
+		return m.Data
 	}
 	return ""
 }
 
 func init() {
-	proto.RegisterType((*PageOption)(nil), "command.PageOption")
-	proto.RegisterType((*User)(nil), "command.User")
+	proto1.RegisterType((*GrpcRequest)(nil), "proto.GrpcRequest")
+	proto1.RegisterType((*GrpcReply)(nil), "proto.GrpcReply")
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -106,7 +122,7 @@ const _ = grpc.SupportPackageIsVersion4
 
 type CommandClient interface {
 	// list users on pages
-	ListOnline(ctx context.Context, in *PageOption, opts ...grpc.CallOption) (Command_ListOnlineClient, error)
+	ListOnline(ctx context.Context, in *GrpcRequest, opts ...grpc.CallOption) (*GrpcReply, error)
 }
 
 type commandClient struct {
@@ -117,99 +133,74 @@ func NewCommandClient(cc *grpc.ClientConn) CommandClient {
 	return &commandClient{cc}
 }
 
-func (c *commandClient) ListOnline(ctx context.Context, in *PageOption, opts ...grpc.CallOption) (Command_ListOnlineClient, error) {
-	stream, err := grpc.NewClientStream(ctx, &_Command_serviceDesc.Streams[0], c.cc, "/command.Command/ListOnline", opts...)
+func (c *commandClient) ListOnline(ctx context.Context, in *GrpcRequest, opts ...grpc.CallOption) (*GrpcReply, error) {
+	out := new(GrpcReply)
+	err := grpc.Invoke(ctx, "/proto.Command/ListOnline", in, out, c.cc, opts...)
 	if err != nil {
 		return nil, err
 	}
-	x := &commandListOnlineClient{stream}
-	if err := x.ClientStream.SendMsg(in); err != nil {
-		return nil, err
-	}
-	if err := x.ClientStream.CloseSend(); err != nil {
-		return nil, err
-	}
-	return x, nil
-}
-
-type Command_ListOnlineClient interface {
-	Recv() (*User, error)
-	grpc.ClientStream
-}
-
-type commandListOnlineClient struct {
-	grpc.ClientStream
-}
-
-func (x *commandListOnlineClient) Recv() (*User, error) {
-	m := new(User)
-	if err := x.ClientStream.RecvMsg(m); err != nil {
-		return nil, err
-	}
-	return m, nil
+	return out, nil
 }
 
 // Server API for Command service
 
 type CommandServer interface {
 	// list users on pages
-	ListOnline(*PageOption, Command_ListOnlineServer) error
+	ListOnline(context.Context, *GrpcRequest) (*GrpcReply, error)
 }
 
 func RegisterCommandServer(s *grpc.Server, srv CommandServer) {
 	s.RegisterService(&_Command_serviceDesc, srv)
 }
 
-func _Command_ListOnline_Handler(srv interface{}, stream grpc.ServerStream) error {
-	m := new(PageOption)
-	if err := stream.RecvMsg(m); err != nil {
-		return err
+func _Command_ListOnline_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GrpcRequest)
+	if err := dec(in); err != nil {
+		return nil, err
 	}
-	return srv.(CommandServer).ListOnline(m, &commandListOnlineServer{stream})
-}
-
-type Command_ListOnlineServer interface {
-	Send(*User) error
-	grpc.ServerStream
-}
-
-type commandListOnlineServer struct {
-	grpc.ServerStream
-}
-
-func (x *commandListOnlineServer) Send(m *User) error {
-	return x.ServerStream.SendMsg(m)
+	if interceptor == nil {
+		return srv.(CommandServer).ListOnline(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/proto.Command/ListOnline",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CommandServer).ListOnline(ctx, req.(*GrpcRequest))
+	}
+	return interceptor(ctx, in, info, handler)
 }
 
 var _Command_serviceDesc = grpc.ServiceDesc{
-	ServiceName: "command.Command",
+	ServiceName: "proto.Command",
 	HandlerType: (*CommandServer)(nil),
-	Methods:     []grpc.MethodDesc{},
-	Streams: []grpc.StreamDesc{
+	Methods: []grpc.MethodDesc{
 		{
-			StreamName:    "ListOnline",
-			Handler:       _Command_ListOnline_Handler,
-			ServerStreams: true,
+			MethodName: "ListOnline",
+			Handler:    _Command_ListOnline_Handler,
 		},
 	},
+	Streams:  []grpc.StreamDesc{},
 	Metadata: "trojan.proto",
 }
 
-func init() { proto.RegisterFile("trojan.proto", fileDescriptor0) }
+func init() { proto1.RegisterFile("trojan.proto", fileDescriptor0) }
 
 var fileDescriptor0 = []byte{
-	// 200 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x44, 0x8f, 0xbf, 0x4f, 0x87, 0x40,
-	0x0c, 0x47, 0x45, 0x41, 0xa4, 0xc1, 0xa5, 0x3a, 0x10, 0x5d, 0x08, 0x93, 0x13, 0x31, 0xea, 0xee,
-	0xa0, 0x9b, 0x46, 0x0c, 0xc6, 0x99, 0x9c, 0xd0, 0x90, 0x1a, 0xef, 0x47, 0xee, 0x8e, 0x85, 0xbf,
-	0xde, 0x50, 0x8c, 0xdf, 0xed, 0xee, 0xb5, 0xfd, 0xf4, 0x15, 0xca, 0xe8, 0xed, 0xb7, 0x32, 0xad,
-	0xf3, 0x36, 0x5a, 0xcc, 0x47, 0xab, 0xb5, 0x32, 0x53, 0xf3, 0x02, 0xf0, 0xae, 0x66, 0xea, 0x5c,
-	0x64, 0x6b, 0xf0, 0x1a, 0x0a, 0xa7, 0x66, 0x1a, 0x02, 0xaf, 0x54, 0x25, 0x75, 0x72, 0x93, 0xf5,
-	0x67, 0x1b, 0xf8, 0xe0, 0x95, 0xb0, 0x86, 0xd2, 0x91, 0x1f, 0xa4, 0xc1, 0x2c, 0xba, 0x3a, 0x96,
-	0x3a, 0x38, 0xf2, 0x5b, 0xc2, 0xdb, 0xa2, 0x9b, 0x67, 0x48, 0x3f, 0x03, 0x79, 0x44, 0x48, 0x59,
-	0x13, 0x4b, 0x42, 0xd1, 0xcb, 0x7b, 0x67, 0x81, 0x65, 0x4a, 0x58, 0x60, 0xbc, 0x84, 0x8c, 0xc7,
-	0x91, 0xa7, 0xea, 0x44, 0xe0, 0xfe, 0xb9, 0x7b, 0x84, 0xfc, 0x69, 0xb7, 0xc3, 0x07, 0x80, 0x57,
-	0x0e, 0xb1, 0x33, 0x3f, 0x6c, 0x08, 0x2f, 0xda, 0x3f, 0xeb, 0xf6, 0xa0, 0x7c, 0x75, 0xfe, 0x0f,
-	0xb7, 0xd5, 0xcd, 0xd1, 0x6d, 0xf2, 0x75, 0x2a, 0x37, 0xde, 0xff, 0x06, 0x00, 0x00, 0xff, 0xff,
-	0xc7, 0x92, 0x8a, 0x13, 0xf3, 0x00, 0x00, 0x00,
+	// 236 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x54, 0x8f, 0x3f, 0x4f, 0xc3, 0x30,
+	0x10, 0xc5, 0x29, 0xb4, 0xf9, 0x73, 0x14, 0x09, 0xdd, 0x00, 0x01, 0x96, 0x2a, 0x2c, 0x9d, 0x3a,
+	0x00, 0x3b, 0x03, 0x03, 0x0b, 0x2a, 0x92, 0xf9, 0x00, 0xd1, 0xd1, 0x9c, 0xa8, 0x91, 0x6b, 0x9b,
+	0xf8, 0x2a, 0xa5, 0xfd, 0xf4, 0x28, 0x76, 0x06, 0x98, 0xee, 0xde, 0xef, 0x0d, 0x3f, 0x3d, 0x98,
+	0x4b, 0xe7, 0xbe, 0xc9, 0xae, 0x7c, 0xe7, 0xc4, 0xe1, 0x2c, 0x9e, 0x3a, 0xc0, 0xf9, 0x6b, 0xe7,
+	0x37, 0x8a, 0x7f, 0xf6, 0x1c, 0x04, 0xef, 0xa0, 0xf4, 0xf4, 0xc5, 0x4d, 0xd0, 0x47, 0xae, 0x26,
+	0x8b, 0xc9, 0x72, 0xa6, 0x8a, 0x01, 0x7c, 0xe8, 0x23, 0xe3, 0x35, 0xe4, 0xb1, 0xb4, 0xae, 0x3a,
+	0x8d, 0x55, 0x36, 0xc4, 0xb5, 0xc3, 0x2b, 0xc8, 0x68, 0x23, 0xda, 0xd9, 0xea, 0x6c, 0x31, 0x59,
+	0x96, 0x6a, 0x4c, 0x03, 0xe7, 0x5e, 0xd8, 0xb6, 0xd5, 0x34, 0xf1, 0x94, 0xea, 0x06, 0xca, 0x24,
+	0xf5, 0xe6, 0x80, 0xf7, 0x70, 0x21, 0x4e, 0xc8, 0x34, 0x1d, 0x87, 0xbd, 0x91, 0x30, 0x6a, 0xe7,
+	0x11, 0xaa, 0xc4, 0xf0, 0x06, 0x8a, 0x2d, 0x85, 0xc6, 0x72, 0x2f, 0xd1, 0x5d, 0xa8, 0x7c, 0x4b,
+	0x61, 0xcd, 0xbd, 0x20, 0xc2, 0xb4, 0x25, 0xa1, 0x51, 0x1d, 0xff, 0x87, 0x67, 0xc8, 0x5f, 0xdc,
+	0x6e, 0x47, 0xb6, 0xc5, 0x27, 0x80, 0x37, 0x1d, 0xe4, 0xdd, 0x1a, 0x6d, 0x19, 0x31, 0xad, 0x5f,
+	0xfd, 0xd9, 0x7c, 0x7b, 0xf9, 0x8f, 0x79, 0x73, 0xa8, 0x4f, 0x3e, 0xb3, 0x88, 0x1e, 0x7f, 0x03,
+	0x00, 0x00, 0xff, 0xff, 0xa9, 0x91, 0x4e, 0x77, 0x34, 0x01, 0x00, 0x00,
 }
