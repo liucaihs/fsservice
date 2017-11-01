@@ -1,0 +1,13 @@
+version: '2'
+services:
+  rcs:
+    image: rcs
+    ports: 
+      - "9090:9090"
+	  - "2800:2800"
+	  - "8091:8091"
+    environment:
+        - ETCD_ENDPOINTS=192.168.1.214:2379
+		- KAFKA_ENDPOINTS=192.168.1.214:9092
+		- NODE_ID=1
+    restart: always
